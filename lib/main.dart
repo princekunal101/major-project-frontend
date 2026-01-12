@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:college_project/sample.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
-      title: 'Flutter Demo',
+      title: 'Community Study',
       theme: CupertinoThemeData(primaryColor: CupertinoColors.activeBlue),
       home: MySampleScreen(),
     );

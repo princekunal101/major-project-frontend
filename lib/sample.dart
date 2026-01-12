@@ -14,7 +14,7 @@ class _MySampleScreenState extends State<MySampleScreen> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar.large(
-        largeTitle: Text('College Project'),
+        largeTitle: Text('Community Study'),
       ),
       child: SafeArea(
         child: Center(
