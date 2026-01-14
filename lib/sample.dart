@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MySampleScreen extends StatefulWidget {
   const MySampleScreen({super.key});
@@ -33,7 +34,10 @@ class _MySampleScreenState extends State<MySampleScreen> {
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: CupertinoButton.filled(
-                  onPressed: () => setState(() => _counter++),
+                  onPressed: () => {
+                    setState(() => _counter++),
+                    print(dotenv.get('API_BASE_URL')),
+                  },
 
                   sizeStyle: CupertinoButtonSize.large,
                   child: const Text('Increment'),

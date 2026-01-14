@@ -1,10 +1,9 @@
-
-import 'package:college_project/sample.dart';
+import 'package:college_project/routes/app_routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-void main() {
+Future main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: CupertinoColors.transparent,
@@ -15,19 +14,6 @@ void main() {
   );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoApp(
-      title: 'Community Study',
-      theme: CupertinoThemeData(primaryColor: CupertinoColors.activeBlue),
-      home: MySampleScreen(),
-    );
-  }
+  await dotenv.load(fileName: ".env");
+  runApp(AppRoutes());
 }
