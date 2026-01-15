@@ -1,3 +1,4 @@
+import 'package:college_project/core/error/failure.dart';
 import 'package:college_project/features/auth/presentation/bloc/login_bloc/login_event.dart';
 import 'package:college_project/features/auth/presentation/bloc/login_bloc/login_state.dart';
 
@@ -13,9 +14,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginLoading());
       try {
         final user = await loginUser(event.email, event.password);
-        emit(LoginSuccess(user));
-      } catch (e) {
-        emit(LoginFailure(e.toString()));
+        emit(LoginSuccess());
+      } catch (error) {
+        final message = mapExceptionToMessage(error);
+        emit(LoginFailure(message));
       }
     });
   }

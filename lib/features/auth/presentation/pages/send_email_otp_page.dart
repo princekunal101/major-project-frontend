@@ -10,6 +10,9 @@ class SendEmailOtpPage extends StatefulWidget {
 class _SendEmailOtpPageState extends State<SendEmailOtpPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(),
+      child: SafeArea(child: const Center(child: Text('Email OTP Screen'))),
+    );
   }
 }

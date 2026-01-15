@@ -1,3 +1,4 @@
+import 'package:college_project/core/services/secure_storage_service.dart';
 import 'package:college_project/routes/app_routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,9 @@ Future main() async {
   );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
+  WidgetsFlutterBinding.ensureInitialized();
+  final SecureStorageService storage = SecureStorageService();
+  final isLogin = await storage.isLogin();
   await dotenv.load(fileName: ".env");
-  runApp(AppRoutes());
+  runApp(AppRoutes(isLogin: isLogin, storage: storage));
 }

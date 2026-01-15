@@ -1,3 +1,4 @@
+import 'package:college_project/core/services/secure_storage_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -10,12 +11,33 @@ class MySampleScreen extends StatefulWidget {
 
 class _MySampleScreenState extends State<MySampleScreen> {
   int _counter = 0;
+  final SecureStorageService storage = SecureStorageService();
+
+  void tokenFunction() async {
+    final login = await storage.isLogin();
+    final token = await storage.getAccessToken();
+    print('$login: $token');
+  }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar.large(
-        largeTitle: Text('Community Study'),
+      navigationBar: CupertinoNavigationBar.large(
+        largeTitle: const Text('Community Study'),
+        trailing: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            child: const Icon(CupertinoIcons.arrow_right_square),
+            onTap: () async {
+              await storage.clearAll();
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/login',
+                (route) => false,
+              );
+            },
+          ),
+        ),
       ),
       child: SafeArea(
         child: Center(
@@ -36,7 +58,7 @@ class _MySampleScreenState extends State<MySampleScreen> {
                 child: CupertinoButton.filled(
                   onPressed: () => {
                     setState(() => _counter++),
-                    print(dotenv.get('API_BASE_URL')),
+                    tokenFunction(),
                   },
 
                   sizeStyle: CupertinoButtonSize.large,

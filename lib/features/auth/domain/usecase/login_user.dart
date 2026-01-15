@@ -6,7 +6,7 @@ class LoginUser {
 
   LoginUser(this.repositories);
 
-  Future<User> call(String email, String password) {
+  Future<void> call(String email, String password) {
     return repositories.login(email, password);
   }
 }

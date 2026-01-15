@@ -5,14 +5,17 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:college_project/core/services/secure_storage_service.dart';
 import 'package:college_project/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-void main() {
+Future main() async {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    final SecureStorageService storage = SecureStorageService();
+    final isLogin = await storage.isLogin();
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const AppRoutes());
+    await tester.pumpWidget(AppRoutes(isLogin: isLogin, storage: storage));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
