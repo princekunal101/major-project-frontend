@@ -4,7 +4,7 @@ class ServerException implements Exception {
   ServerException(this.message);
 
   @override
-  String toString() => '$message';
+  String toString() => message;
 }
 
 class NetworkException implements Exception {

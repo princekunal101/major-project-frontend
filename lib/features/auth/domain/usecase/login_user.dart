@@ -1,4 +1,3 @@
-import 'package:college_project/features/auth/domain/entities/user.dart';
 import 'package:college_project/features/auth/domain/repositories/auth_repositories.dart';
 
 class LoginUser {

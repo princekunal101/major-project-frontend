@@ -3,8 +3,6 @@ import 'dart:io';
 
 import 'package:college_project/core/error/exceptions.dart';
 import 'package:college_project/features/auth/data/models/auth_result_model.dart';
-import 'package:college_project/features/auth/data/models/user_model.dart';
-import 'package:college_project/features/auth/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
 class AuthRemoteDataSource {

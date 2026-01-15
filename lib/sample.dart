@@ -1,6 +1,5 @@
 import 'package:college_project/core/services/secure_storage_service.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MySampleScreen extends StatefulWidget {
   const MySampleScreen({super.key});

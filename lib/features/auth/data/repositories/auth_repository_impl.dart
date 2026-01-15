@@ -1,6 +1,5 @@
 import 'package:college_project/core/services/secure_storage_service.dart';
 import 'package:college_project/features/auth/data/datasources/auth_remote_data_source.dart';
-import 'package:college_project/features/auth/domain/entities/user.dart';
 import 'package:college_project/features/auth/domain/repositories/auth_repositories.dart';
 
 class AuthRepositoryImpl extends AuthRepositories {

@@ -57,7 +57,6 @@ class _LoginPageState extends State<LoginPage> {
                   );
                 });
               }
-              ;
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,

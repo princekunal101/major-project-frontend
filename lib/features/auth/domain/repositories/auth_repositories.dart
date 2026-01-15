@@ -1,4 +1,3 @@
-import 'package:college_project/features/auth/domain/entities/user.dart';
 
 abstract class AuthRepositories {
   Future<void> sendOtp(String email);

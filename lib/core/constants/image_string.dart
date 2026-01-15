@@ -1,4 +1,5 @@
 /// This shows all the images are have in the project for using directly name
+library;
 
 class CSImageFile {
   // -- App Brand logo

@@ -1,4 +1,3 @@
-import 'package:college_project/features/auth/domain/entities/user.dart';
 
 abstract class LoginState {}
 
