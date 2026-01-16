@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                       horizontal: 16,
                     ),
                     controller: emailController,
-                    placeholder: 'Username or Email',
+                    placeholder: 'Username or email address',
                   ),
                   CupertinoTextField(
                     padding: EdgeInsetsGeometry.symmetric(
@@ -131,8 +131,11 @@ class _LoginPageState extends State<LoginPage> {
                       //   darkColor: CupertinoColors.white,
                       // ),
                       sizeStyle: CupertinoButtonSize.medium,
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/forgot-password'),
+                      onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/forgot-password',
+                        (route) => false,
+                      ),
                       child: Text(
                         'Forgot Password?',
                         style: TextStyle(fontSize: 16),
@@ -145,7 +148,11 @@ class _LoginPageState extends State<LoginPage> {
                     child: CupertinoButton.tinted(
                       sizeStyle: CupertinoButtonSize.medium,
                       onPressed: () {
-                        Navigator.pushNamed(context, '/send-email-otp');
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/signup-with-email',
+                          (route) => false,
+                        );
                       },
                       child: Text('Create new account'),
                     ),

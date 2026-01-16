@@ -4,7 +4,7 @@ import 'package:college_project/core/error/exceptions.dart';
 
 String mapExceptionToMessage(Object error) {
   if (error is BadRequestException) return error.message;
-  if (error is NetworkException) return 'No Internet Connection';
+  if (error is NetworkException) return 'Something went wrong!';
   if (error is HttpException) return 'Could not find the Server';
   if (error is FormatException) return 'Bad response format';
   if (error is ServerException) return error.message;
