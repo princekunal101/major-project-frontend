@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:college_project/core/error/exceptions.dart';
 import 'package:college_project/features/auth/data/models/auth_result_model.dart';
 import 'package:college_project/features/auth/data/models/resend_otp_cool_down_model.dart';
+import 'package:college_project/features/auth/data/models/user_id_model.dart';
 import 'package:http/http.dart' as http;
 
 class AuthRemoteDataSource {
@@ -109,6 +110,38 @@ class AuthRemoteDataSource {
     } on ServerException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
+      throw UnknownException('Something went wrong! Try Again later');
+    }
+  }
+
+  // for creating password
+  Future<UserIdModel> setPassword(String email, String createPassword) async {
+    try {
+      final response = await client.put(
+        Uri.parse('$baseUrl/set-password'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': createPassword}),
+      );
+      if (response.statusCode == 200) {
+        return UserIdModel(userId: jsonDecode(response.body)['userId']);
+      } else if (response.statusCode == 400) {
+        throw BadRequestException('Enter a valid input fields.');
+      } else if (response.statusCode == 401) {
+        throw ServerException('Something went wrong! Try Again later');
+      } else {
+        throw ServerException(
+          'Status: ${response.statusCode}\n${jsonDecode(response.body)['message'] ?? ''}',
+        );
+      }
+    } on SocketException {
+      throw NetworkException('Something went wrong! Try Again later');
+    } on TimeoutException {
+      throw TimeoutException('Request timeout');
+    } on BadRequestException catch (e) {
+      throw BadRequestException(e.message);
+    } on ServerException catch (e) {
+      throw ServerException(e.message);
+    } catch (error) {
       throw UnknownException('Something went wrong! Try Again later');
     }
   }

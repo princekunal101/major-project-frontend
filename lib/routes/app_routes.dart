@@ -4,14 +4,17 @@ import 'package:college_project/features/auth/data/datasources/auth_remote_data_
 import 'package:college_project/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:college_project/features/auth/domain/usecase/login_user.dart';
 import 'package:college_project/features/auth/domain/usecase/resend_otp.dart';
+import 'package:college_project/features/auth/domain/usecase/set_password.dart';
 import 'package:college_project/features/auth/domain/usecase/signup_with_email.dart';
 import 'package:college_project/features/auth/domain/usecase/verify_otp.dart';
 import 'package:college_project/features/auth/presentation/bloc/email_signup_bloc/email_signup_bloc.dart';
 import 'package:college_project/features/auth/presentation/bloc/login_bloc/login_bloc.dart';
 import 'package:college_project/features/auth/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
+import 'package:college_project/features/auth/presentation/bloc/set_password_bloc/set_password_bloc.dart';
 import 'package:college_project/features/auth/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import 'package:college_project/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:college_project/features/auth/presentation/pages/login_page.dart';
+import 'package:college_project/features/auth/presentation/pages/set_dob_page.dart';
 import 'package:college_project/features/auth/presentation/pages/set_password_page.dart';
 import 'package:college_project/features/auth/presentation/pages/signup_with_email_page.dart';
 import 'package:college_project/features/auth/presentation/pages/verify_email_otp_page.dart';
@@ -125,8 +128,24 @@ class AppRoutes extends StatelessWidget {
           case '/set-password':
             final args = settings.arguments as String;
             return CupertinoPageRoute(
-              builder: (_) => SetPasswordPage(email: args),
+              builder: (_) => BlocProvider(
+                create: (_) => SetPasswordBloc(
+                  SetPassword(
+                    AuthRepositoryImpl(
+                      AuthRemoteDataSource(
+                        http.Client(),
+                        dotenv.get('API_BASE_URL'),
+                      ),
+                      storage,
+                    ),
+                  ),
+                ),
+                child: SetPasswordPage(email: args),
+              ),
             );
+          case '/set-dob':
+            final args = settings.arguments as String;
+            return CupertinoPageRoute(builder: (_) => SetDobPage(userId: args));
 
           default:
             return null;
