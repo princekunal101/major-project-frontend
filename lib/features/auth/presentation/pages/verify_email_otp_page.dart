@@ -6,6 +6,7 @@ import 'package:college_project/features/auth/presentation/bloc/resend_otp_bloc/
 import 'package:college_project/features/auth/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import 'package:college_project/features/auth/presentation/bloc/verify_otp_bloc/verify_otp_event.dart';
 import 'package:college_project/features/auth/presentation/bloc/verify_otp_bloc/verify_otp_state.dart';
+import 'package:college_project/features/auth/presentation/components/already_have_account_button.dart';
 import 'package:college_project/features/auth/presentation/widgets/error_popup.dart';
 import 'package:college_project/features/auth/presentation/widgets/success_popup.dart';
 import 'package:flutter/cupertino.dart';
@@ -159,20 +160,23 @@ class _VerifyEmailOtpPageState extends State<VerifyEmailOtpPage> {
                             )
                           : Container(),
                       Spacer(),
-                      SizedBox(
-                        width: double.infinity,
-                        child: CupertinoButton.tinted(
-                          sizeStyle: CupertinoButtonSize.medium,
-                          onPressed: () {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              '/login',
-                              (route) => false,
-                            );
-                          },
-                          child: Text('I already have an account'),
-                        ),
-                      ),
+
+                      AlreadyHaveAccountButton()
+
+                      // SizedBox(
+                      //   width: double.infinity,
+                      //   child: CupertinoButton.tinted(
+                      //     sizeStyle: CupertinoButtonSize.medium,
+                      //     onPressed: () {
+                      //       Navigator.pushNamedAndRemoveUntil(
+                      //         context,
+                      //         '/login',
+                      //         (route) => false,
+                      //       );
+                      //     },
+                      //     child: Text('I already have an account'),
+                      //   ),
+                      // ),
                     ],
                   );
                 },

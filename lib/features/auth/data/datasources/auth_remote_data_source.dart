@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:college_project/core/error/exceptions.dart';
+import 'package:college_project/core/models/create_username_suggestion.dart';
 import 'package:college_project/features/auth/data/models/auth_result_model.dart';
 import 'package:college_project/features/auth/data/models/resend_otp_cool_down_model.dart';
 import 'package:college_project/features/auth/data/models/user_id_model.dart';
+import 'package:college_project/features/auth/data/models/username_suggestion_model.dart';
 import 'package:http/http.dart' as http;
 
 class AuthRemoteDataSource {
@@ -13,13 +15,14 @@ class AuthRemoteDataSource {
 
   AuthRemoteDataSource(this.client, this.baseUrl);
 
+  final Duration timeLimit = const Duration(seconds: 10);
+
   // for the sending the otp
   Future<void> signupWithEmail(String email) async {
     try {
-      final response = await client.post(
-        Uri.parse('$baseUrl/signup-with-email'),
-        body: {'email': email},
-      );
+      final response = await client
+          .post(Uri.parse('$baseUrl/signup-with-email'), body: {'email': email})
+          .timeout(timeLimit);
 
       if (response.statusCode == 201) {
       } else if (response.statusCode == 400) {
@@ -47,10 +50,12 @@ class AuthRemoteDataSource {
   // for the verifying the otp
   Future<void> verifyOtp(String email, String otp) async {
     try {
-      final response = await client.post(
-        Uri.parse('$baseUrl/verify-signup-otp'),
-        body: {'email': email, 'otp': otp},
-      );
+      final response = await client
+          .post(
+            Uri.parse('$baseUrl/verify-signup-otp'),
+            body: {'email': email, 'otp': otp},
+          )
+          .timeout(timeLimit);
       if (response.statusCode == 201) {
       } else if (response.statusCode == 400) {
         throw BadRequestException('Enter a valid input fields.');
@@ -79,10 +84,9 @@ class AuthRemoteDataSource {
   // for resend the otp
   Future<ResendOtpCoolDownModel> resendOtp(String email) async {
     try {
-      final response = await client.post(
-        Uri.parse('$baseUrl/resend-otp'),
-        body: {'email': email},
-      );
+      final response = await client
+          .post(Uri.parse('$baseUrl/resend-otp'), body: {'email': email})
+          .timeout(timeLimit);
 
       if (response.statusCode == 201) {
         return ResendOtpCoolDownModel(
@@ -117,13 +121,166 @@ class AuthRemoteDataSource {
   // for creating password
   Future<UserIdModel> setPassword(String email, String createPassword) async {
     try {
-      final response = await client.put(
-        Uri.parse('$baseUrl/set-password'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': createPassword}),
-      );
+      final response = await client
+          .put(
+            Uri.parse('$baseUrl/set-password'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email, 'password': createPassword}),
+          )
+          .timeout(timeLimit);
       if (response.statusCode == 200) {
         return UserIdModel(userId: jsonDecode(response.body)['userId']);
+      } else if (response.statusCode == 400) {
+        throw BadRequestException('Enter a valid input fields.');
+      } else if (response.statusCode == 401) {
+        throw ServerException('Something went wrong! Try Again later');
+      } else {
+        throw ServerException(
+          'Status: ${response.statusCode}\n${jsonDecode(response.body)['message'] ?? ''}',
+        );
+      }
+    } on SocketException {
+      throw NetworkException('Something went wrong! Try Again later');
+    } on TimeoutException {
+      throw TimeoutException('Request timeout');
+    } on BadRequestException catch (e) {
+      throw BadRequestException(e.message);
+    } on ServerException catch (e) {
+      throw ServerException(e.message);
+    } catch (error) {
+      throw UnknownException('Something went wrong! Try Again later');
+    }
+  }
+
+  // for adding the dob
+  Future<void> setDob(String userId, String dob) async {
+    try {
+      final response = await client
+          .put(
+            Uri.parse('$baseUrl/set-user-dob'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'userId': userId, 'dob': dob}),
+          )
+          .timeout(timeLimit);
+      if (response.statusCode == 200) {
+      } else if (response.statusCode == 400) {
+        throw ServerException('Something went wrong! Try Again later');
+      } else if (response.statusCode == 401) {
+        throw ServerException('Something went wrong! Try Again later');
+      } else {
+        throw ServerException(
+          'Status: ${response.statusCode}\n${jsonDecode(response.body)['message'] ?? ''}',
+        );
+      }
+    } on SocketException {
+      throw NetworkException('Something went wrong! Try Again later');
+    } on TimeoutException {
+      throw TimeoutException('Request timeout');
+    } on BadRequestException catch (e) {
+      throw BadRequestException(e.message);
+    } on ServerException catch (e) {
+      throw ServerException(e.message);
+    } catch (error) {
+      throw UnknownException('Something went wrong! Try Again later');
+    }
+  }
+
+  Future<void> setFullName(String userId, String fullName) async {
+    try {
+      final response = await client
+          .post(
+            Uri.parse('$baseUrl/create-profile'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'userId': userId, 'fullName': fullName}),
+          )
+          .timeout(timeLimit);
+
+      if (response.statusCode == 201) {
+      } else if (response.statusCode == 401) {
+        throw ServerException('Something went wrong! Try Again later');
+      } else {
+        throw ServerException(
+          'Status: ${response.statusCode}\n${jsonDecode(response.body)['message'] ?? ''}',
+        );
+      }
+    } on SocketException {
+      throw NetworkException('Something went wrong! Try Again later');
+    } on TimeoutException {
+      throw TimeoutException('Request timeout');
+    } on BadRequestException catch (e) {
+      throw BadRequestException(e.message);
+    } on ServerException catch (e) {
+      throw ServerException(e.message);
+    } catch (error) {
+      throw ServerException(error.toString());
+      // throw UnknownException('Something went wrong! Try Again later');
+    }
+  }
+
+  Future<CreateUsernameSuggestion> setUsername(
+    String userId,
+    String username,
+  ) async {
+    try {
+      final response = await client
+          .post(
+            Uri.parse('$baseUrl/set-username'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'userId': userId, 'username': username}),
+          )
+          .timeout(timeLimit);
+      if (response.statusCode == 201) {
+        return CreateUsernameSuggestion.success();
+      } else if (response.statusCode == 409) {
+        return CreateUsernameSuggestion.conflict(
+          UsernameSuggestionModel.fromJson(jsonDecode(response.body)),
+        );
+      } else if (response.statusCode == 400) {
+        throw BadRequestException('Enter a valid input fields.');
+      } else if (response.statusCode == 401) {
+        throw ServerException('Something went wrong! Try Again later');
+      } else {
+        throw ServerException(
+          'Status: ${response.statusCode}\n${jsonDecode(response.body)['message'] ?? ''}',
+        );
+      }
+    } on SocketException {
+      throw NetworkException('Something went wrong! Try Again later');
+    } on TimeoutException {
+      throw TimeoutException('Request timeout');
+    } on BadRequestException catch (e) {
+      throw BadRequestException(e.message);
+    } on ServerException catch (e) {
+      throw ServerException(e.message);
+    } catch (error) {
+      throw UnknownException('Something went wrong! Try Again later');
+    }
+  }
+
+  // for auto login after terms
+  Future<AuthResultModel> acceptedTerms(
+    String userId,
+    bool acceptedTerms,
+  ) async {
+    try {
+      final response = await client
+          .post(
+            Uri.parse('$baseUrl/accepted-terms'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'userId': userId,
+              'acceptedTerms': acceptedTerms,
+            }),
+          )
+          .timeout(timeLimit);
+
+      if (response.statusCode == 201) {
+        final jsonResponse = jsonDecode(response.body);
+        return AuthResultModel(
+          accessToken: jsonResponse['accessToken'],
+          refreshToken: jsonResponse['refreshToken'],
+          userId: jsonResponse['userId'],
+        );
       } else if (response.statusCode == 400) {
         throw BadRequestException('Enter a valid input fields.');
       } else if (response.statusCode == 401) {
@@ -149,11 +306,13 @@ class AuthRemoteDataSource {
   // for the login
   Future<AuthResultModel> login(String email, String password) async {
     try {
-      final response = await client.post(
-        Uri.parse('$baseUrl/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
-      );
+      final response = await client
+          .post(
+            Uri.parse('$baseUrl/login'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email, 'password': password}),
+          )
+          .timeout(timeLimit);
 
       if (response.statusCode == 201) {
         final jsonResponse = jsonDecode(response.body);
@@ -184,6 +343,111 @@ class AuthRemoteDataSource {
     } on ServerException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
+      throw UnknownException('Something went wrong! Try Again later');
+    }
+  }
+
+  Future<void> forgottenPassword(String email, bool isOtpMode) async {
+    try {
+      final response = await client
+          .post(
+            Uri.parse('$baseUrl/forgot-password'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email, 'isOtpMode': isOtpMode}),
+          )
+          .timeout(timeLimit);
+      if (response.statusCode == 201) {
+      } else if (response.statusCode == 400) {
+        throw BadRequestException('Enter a valid input fields.');
+      } else if (response.statusCode == 401) {
+        throw ServerException('Something went wrong! Try Again later');
+      } else {
+        throw ServerException(
+          'Status: ${response.statusCode}\n${jsonDecode(response.body)['message'] ?? ''}',
+        );
+      }
+    } on SocketException {
+      throw NetworkException('Something went wrong! Try Again later');
+    } on TimeoutException {
+      throw TimeoutException('Request timeout');
+    } on BadRequestException catch (e) {
+      throw BadRequestException(e.message);
+    } on ServerException catch (e) {
+      throw ServerException(e.message);
+    } catch (error) {
+      throw UnknownException('Something went wrong! Try Again later');
+    }
+  }
+
+  Future<void> verifyForgotPasswordOtp(String email, String otp) async {
+    try {
+      final response = await client
+          .post(
+            Uri.parse('$baseUrl/verify-reset-otp'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email, 'otp': otp}),
+          )
+          .timeout(timeLimit);
+      if (response.statusCode == 201) {
+      } else if (response.statusCode == 400) {
+        throw BadRequestException('Enter a valid input fields.');
+      } else if (response.statusCode == 401) {
+        throw ServerException('Something went wrong! Try Again later');
+      } else {
+        throw ServerException(
+          'Status: ${response.statusCode}\n${jsonDecode(response.body)['message'] ?? ''}',
+        );
+      }
+    } on SocketException {
+      throw NetworkException('Something went wrong! Try Again later');
+    } on TimeoutException {
+      throw TimeoutException('Request timeout');
+    } on BadRequestException catch (e) {
+      throw BadRequestException(e.message);
+    } on ServerException catch (e) {
+      throw ServerException(e.message);
+    } catch (error) {
+      throw UnknownException('Something went wrong! Try Again later');
+    }
+  }
+
+  Future<AuthResultModel> setForgotNewPassword(
+    String email,
+    String newPassword,
+  ) async {
+    try {
+      final response = await client
+          .put(
+            Uri.parse('$baseUrl/reset-password'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email, 'newPassword': newPassword}),
+          )
+          .timeout(timeLimit);
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        return AuthResultModel(
+          accessToken: jsonResponse['accessToken'],
+          refreshToken: jsonResponse['refreshToken'],
+          userId: jsonResponse['userId'],
+        );
+      } else if (response.statusCode == 400) {
+        throw BadRequestException('Enter a valid input fields.');
+      } else if (response.statusCode == 401) {
+        throw ServerException('Something went wrong! Try Again later');
+      } else {
+        throw ServerException(
+          'Status: ${response.statusCode}\n${jsonDecode(response.body)['message'] ?? ''}',
+        );
+      }
+    } on SocketException {
+      throw NetworkException('Something went wrong! Try Again later');
+    } on TimeoutException {
+      throw TimeoutException('Request timeout');
+    } on BadRequestException catch (e) {
+      throw BadRequestException(e.message);
+    } on ServerException catch (e) {
+      throw ServerException(e.message);
+    } catch (error) {
       throw UnknownException('Something went wrong! Try Again later');
     }
   }

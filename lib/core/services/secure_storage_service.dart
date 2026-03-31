@@ -13,6 +13,14 @@ class SecureStorageService {
     await _storage.write(key: 'userId', value: userId);
   }
 
+  Future<void> updateAccessToken(
+    String accessToken,
+    String refreshToken,
+  ) async {
+    await _storage.write(key: 'accessToken', value: accessToken);
+    await _storage.write(key: 'refreshToken', value: refreshToken);
+  }
+
   Future<bool> isLogin() async =>
       await _storage.read(key: 'accessToken') == null ? false : true;
 
@@ -21,6 +29,8 @@ class SecureStorageService {
 
   Future<String?> getRefreshToken() async =>
       await _storage.read(key: 'refreshToken');
+
+  Future<String?> getUserId() async => await _storage.read(key: 'userId');
 
   Future<void> clearAll() async => await _storage.deleteAll();
 }

@@ -138,7 +138,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       child: Text(
                         'Forgot Password?',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

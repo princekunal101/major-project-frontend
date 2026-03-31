@@ -1,6 +1,8 @@
+import 'package:college_project/core/utils/password_string_validator.dart';
 import 'package:college_project/features/auth/presentation/bloc/set_password_bloc/set_password_bloc.dart';
 import 'package:college_project/features/auth/presentation/bloc/set_password_bloc/set_password_event.dart';
 import 'package:college_project/features/auth/presentation/bloc/set_password_bloc/set_password_state.dart';
+import 'package:college_project/features/auth/presentation/components/already_have_account_button.dart';
 import 'package:college_project/features/auth/presentation/widgets/error_popup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,32 +74,38 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
                       onPressed: () {
                         final s = setPasswordController.text;
                         if (s.length >= 8 &&
-                            hasLowercase(s) &&
-                            hasUppercase(s) &&
-                            hasNumber(s) &&
-                            hasSpecialCharacter(s)) {
+                            PasswordStringValidator().hasLowercase(s) &&
+                            PasswordStringValidator().hasUppercase(s) &&
+                            PasswordStringValidator().hasNumber(s) &&
+                            PasswordStringValidator().hasSpecialCharacter(s)) {
                           _onSubmit();
                         } else {
-                          ErrorPopup.show(context, '${validatePassword(s)}');
+                          ErrorPopup.show(
+                            context,
+                            '${PasswordStringValidator().validatePassword(s)}',
+                          );
                         }
                       },
                     ),
                   ),
                   Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    child: CupertinoButton.tinted(
-                      sizeStyle: CupertinoButtonSize.medium,
-                      child: Text('I have already an account'),
-                      onPressed: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/login',
-                          (route) => false,
-                        );
-                      },
-                    ),
-                  ),
+
+                  AlreadyHaveAccountButton(),
+
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   child: CupertinoButton.tinted(
+                  //     sizeStyle: CupertinoButtonSize.medium,
+                  //     child: Text('I have already an account'),
+                  //     onPressed: () {
+                  //       Navigator.pushNamedAndRemoveUntil(
+                  //         context,
+                  //         '/login',
+                  //         (route) => false,
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                 ],
               );
             },
@@ -112,38 +120,39 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
     );
   }
 
-  // check String patterns
-  bool hasUppercase(String s) => s.contains(RegExp(r'[A-Z]'));
-
-  bool hasLowercase(String s) => s.contains(RegExp(r'[a-z]'));
-
-  bool hasNumber(String s) => s.contains(RegExp(r'[0-9]'));
-
-  bool hasSpecialCharacter(String s) => s.contains(RegExp(r'[@$#!%*?&]'));
-
-  String? validatePassword(String password) {
-    List<String> missing = [];
-
-    final hasLower = hasLowercase(password);
-    final hasUpper = hasUppercase(password);
-    final hasNum = hasNumber(password);
-    final hasSpecial = hasSpecialCharacter(password);
-
-    if (password.length < 8) {
-      return 'Password must be greater or equal to 8 characters';
-    }
-
-    if (!hasLower && !hasUpper && !hasNum && !hasSpecial) {
-      return 'Password must contain at least one lowercase, one uppercase, one number and one special character.';
-    }
-
-    if (!hasLower) missing.add('one lowercase letter');
-    if (!hasUpper) missing.add('one uppercase letter');
-    if (!hasNum) missing.add('one number');
-    if (!hasSpecial) missing.add('one special character');
-
-    if (missing.isEmpty) return null;
-
-    return 'Password must contain at least ${missing.join(' and ')}.';
-  }
+  //
+  // // check String patterns
+  // bool hasUppercase(String s) => s.contains(RegExp(r'[A-Z]'));
+  //
+  // bool hasLowercase(String s) => s.contains(RegExp(r'[a-z]'));
+  //
+  // bool hasNumber(String s) => s.contains(RegExp(r'[0-9]'));
+  //
+  // bool hasSpecialCharacter(String s) => s.contains(RegExp(r'[@$#!%*?&]'));
+  //
+  // String? validatePassword(String password) {
+  //   List<String> missing = [];
+  //
+  //   final hasLower = hasLowercase(password);
+  //   final hasUpper = hasUppercase(password);
+  //   final hasNum = hasNumber(password);
+  //   final hasSpecial = hasSpecialCharacter(password);
+  //
+  //   if (password.length < 8) {
+  //     return 'Password must be greater or equal to 8 characters';
+  //   }
+  //
+  //   if (!hasLower && !hasUpper && !hasNum && !hasSpecial) {
+  //     return 'Password must contain at least one lowercase, one uppercase, one number and one special character.';
+  //   }
+  //
+  //   if (!hasLower) missing.add('one lowercase letter');
+  //   if (!hasUpper) missing.add('one uppercase letter');
+  //   if (!hasNum) missing.add('one number');
+  //   if (!hasSpecial) missing.add('one special character');
+  //
+  //   if (missing.isEmpty) return null;
+  //
+  //   return 'Password must contain at least ${missing.join(' and ')}.';
+  // }
 }

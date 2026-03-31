@@ -1,6 +1,7 @@
 import 'package:college_project/features/auth/presentation/bloc/email_signup_bloc/email_signup_bloc.dart';
 import 'package:college_project/features/auth/presentation/bloc/email_signup_bloc/email_signup_event.dart';
 import 'package:college_project/features/auth/presentation/bloc/email_signup_bloc/email_signup_state.dart';
+import 'package:college_project/features/auth/presentation/components/already_have_account_button.dart';
 import 'package:college_project/features/auth/presentation/widgets/error_popup.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,7 +52,7 @@ class _SignupWithEmailPageState extends State<SignupWithEmailPage> {
                 children: [
                   Text(
                     'Enter the email address which you can be contact. No one will see this on your profile.',
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: 15),
                   ),
                   CupertinoTextField(
                     padding: EdgeInsetsGeometry.symmetric(
@@ -72,20 +73,21 @@ class _SignupWithEmailPageState extends State<SignupWithEmailPage> {
                     ),
                   ),
                   Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    child: CupertinoButton.tinted(
-                      sizeStyle: CupertinoButtonSize.medium,
-                      onPressed: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/login',
-                          (route) => false,
-                        );
-                      },
-                      child: Text('I already have an account'),
-                    ),
-                  ),
+                  AlreadyHaveAccountButton(),
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   child: CupertinoButton.tinted(
+                  //     sizeStyle: CupertinoButtonSize.medium,
+                  //     onPressed: () {
+                  //       Navigator.pushNamedAndRemoveUntil(
+                  //         context,
+                  //         '/login',
+                  //         (route) => false,
+                  //       );
+                  //     },
+                  //     child: Text('I already have an account'),
+                  //   ),
+                  // ),
                 ],
               );
             },
