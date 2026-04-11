@@ -1,6 +1,13 @@
+import 'package:college_project/core/services/dio_client.dart';
 import 'package:college_project/core/utils/enums/sliding_tab_enum.dart';
 import 'package:college_project/core/services/secure_storage_service.dart';
 import 'package:college_project/core/widgets/avatar_image_widget.dart';
+import 'package:college_project/features/posts/data/datasources/posts_remote_data_source.dart';
+import 'package:college_project/features/posts/data/repositories/post_repositories_impl.dart';
+import 'package:college_project/features/posts/domain/usecase/search_posts.dart';
+import 'package:college_project/features/posts/presentation/bloc/fetch_posts_bloc/fetch_posts_bloc.dart';
+import 'package:college_project/features/posts/presentation/bloc/fetch_posts_bloc/fetch_posts_event.dart';
+import 'package:college_project/features/posts/presentation/widget/community_post_item_widget.dart';
 import 'package:college_project/features/profile/domain/repositories/profile_repositories.dart';
 import 'package:college_project/features/profile/domain/usecase/profile_user.dart';
 import 'package:college_project/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
@@ -20,6 +27,9 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
+  final SecureStorageService storageService = SecureStorageService();
+  late DioClient dioClient = DioClient(storageService);
+
   late String userId = '';
   SlidingTabEnum slidingTabEnum = SlidingTabEnum.posts;
 
@@ -87,11 +97,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             arguments: userData.username,
                           );
                         });
-
-                        // Navigator.of(context, rootNavigator: false).pushNamed(
-                        //   '/settings-profile',
-                        //   arguments: userData.username,
-                        // );
                       },
                     )
                   : null,
@@ -149,19 +154,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ],
                     ),
 
-                    // Text(userData.id),
-                    // Text(userData.userId),
-                    // Text('${userData.name}'),
-                    // Text('${userData.username}'),
-                    // Text('${userData.gender}'),
-                    // Text('${userData.dob}'),
-                    // Text('${userData.bio}'),
-                    // Text('${userData.bannerUrl}'),
-                    // Text('${userData.profileImageUrl}'),
-                    // Text('${userData.pronoun}'),
-                    // Text('${userData.isProfessional}'),
-                    // Text('${userData.isVerified}'),
-                    // Text('${userData.creationDate}'),
                     SizedBox(
                       height: 80,
                       width: double.infinity,
@@ -170,7 +162,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         child: Row(
                           spacing: 16,
                           children: [
-
                             Expanded(
                               flex: 1,
                               child: Container(
@@ -219,24 +210,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 ),
                               ),
                             ),
-                            // Expanded(
-                            //   flex: 1,
-                            //   child: Container(
-                            //     height: 70,
-                            //     width: 100,
-                            //     decoration: BoxDecoration(
-                            //       borderRadius: BorderRadius.all(
-                            //         Radius.circular(8.0),
-                            //       ),
-                            //
-                            //       border: BoxBorder.all(
-                            //         width: 1,
-                            //         color: CupertinoColors.separator
-                            //             .resolveFrom(context),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),
@@ -280,19 +253,40 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: double.infinity,
-                      height: 0.5,
-                      color: CupertinoColors.separator.resolveFrom(context),
-                    ),
                     Expanded(
-                      child: IndexedStack(
-                        index: slidingTabEnum.index,
+                      child: Column(
                         children: [
-                          PostsContainerWidget(),
-                          CommentsContainerWidget(),
-                          // Center(child: Text('Posts')),
-                          // Center(child: Text('Comments')),
+                          Container(
+                            width: double.infinity,
+                            height: 0.5,
+                            color: CupertinoColors.separator.resolveFrom(
+                              context,
+                            ),
+                          ),
+                          Expanded(
+                            child: IndexedStack(
+                              index: slidingTabEnum.index,
+                              children: [
+                                BlocProvider(
+                                  create: (_) => FetchPostsBloc(
+                                    SearchPosts(
+                                      PostRepositoriesImpl(
+                                        PostsRemoteDataSource(dioClient.dio),
+                                      ),
+                                    ),
+                                  )..add(FetchUserPosts(userId: userId)),
+                                  child: CommunityPostItemWidget(
+                                    key: PageStorageKey('userFeed'),
+                                    isCommunity: false,
+                                  ),
+                                ),
+                                // PostsContainerWidget(),
+                                CommentsContainerWidget(),
+                                // Center(child: Text('Posts')),
+                                // Center(child: Text('Comments')),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),

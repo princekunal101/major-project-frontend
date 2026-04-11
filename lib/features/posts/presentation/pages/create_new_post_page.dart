@@ -14,14 +14,36 @@ class CreateNewPostPage extends StatefulWidget {
 class _CreateNwePostPageState extends State<CreateNewPostPage> {
   final SecureStorageService storageService = SecureStorageService();
 
+  final TextEditingController _titleTextController = TextEditingController();
+  final TextEditingController _subTitleTextController = TextEditingController();
+  final TextEditingController _bodyTextController = TextEditingController();
+  final TextEditingController _summaryTitleTextController =
+      TextEditingController();
+  final TextEditingController _summaryBodyTextController =
+      TextEditingController();
+
+  int _summaryBodyTextCount = 0;
+  int _bodyTextCount = 0;
+
   void clearStorage() async {
     await storageService.clearAll();
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _titleTextController.dispose();
+    _subTitleTextController.dispose();
+    _bodyTextController.dispose();
+    _summaryTitleTextController.dispose();
+    _summaryBodyTextController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       navigationBar: CupertinoNavigationBar(
         leading: CupertinoButton(
           padding: EdgeInsetsDirectional.all(0),
@@ -89,6 +111,8 @@ class _CreateNwePostPageState extends State<CreateNewPostPage> {
                             context,
                           ),
                         ),
+                        textCapitalization: TextCapitalization.sentences,
+                        controller: _titleTextController,
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -115,6 +139,20 @@ class _CreateNwePostPageState extends State<CreateNewPostPage> {
                 ),
               ),
 
+              CupertinoTextField.borderless(
+                padding: EdgeInsetsGeometry.symmetric(horizontal: 16.0),
+                // placeholderStyle: TextStyle(fontSize: 18, ),
+                placeholder: 'Subtitle (Optional)',
+                minLines: null,
+                maxLines: null,
+                expands: true,
+                style: TextStyle(fontSize: 20),
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.next,
+                controller: _subTitleTextController,
+                textCapitalization: TextCapitalization.sentences,
+              ),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
@@ -133,20 +171,137 @@ class _CreateNwePostPageState extends State<CreateNewPostPage> {
                 ),
               ),
 
-              CupertinoTextField.borderless(
-                padding: EdgeInsetsGeometry.symmetric(horizontal: 16.0),
-                // placeholderStyle: TextStyle(fontSize: 18, ),
-                placeholder: 'Body (Optional)',
-                minLines: null,
-                maxLines: null,
-                expands: true,
-                style: TextStyle(fontSize: 18),
-                keyboardType: TextInputType.multiline,
-                textInputAction: TextInputAction.done,
+              Expanded(
+                child: CupertinoScrollbar(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      spacing: 8,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Spacer(),
+                                  Text(
+                                    '$_bodyTextCount',
+                                    style: TextStyle(
+                                      color: CupertinoColors.secondaryLabel
+                                          .resolveFrom(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              CupertinoTextField(
+                                padding: EdgeInsetsGeometry.symmetric(
+                                  horizontal: 8.0,
+                                  vertical: 4.0,
+                                ),
+                                // placeholderStyle: TextStyle(fontSize: 18, ),
+                                placeholder: 'Body',
+                                minLines: 7,
+                                maxLines: null,
+                                // expands: true,
+                                style: TextStyle(fontSize: 18),
+                                keyboardType: TextInputType.multiline,
+                                controller: _bodyTextController,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _bodyTextCount = value.length;
+                                  });
+                                },
+                                // textInputAction: TextInputAction.done,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        Container(
+                          height: 0.5,
+                          width: double.infinity,
+                          color: CupertinoColors.separator.resolveFrom(context),
+                        ),
+
+                        CupertinoTextField.borderless(
+                          padding: EdgeInsetsGeometry.symmetric(
+                            horizontal: 16.0,
+                          ),
+                          placeholderStyle: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: CupertinoColors.tertiaryLabel.resolveFrom(
+                              context,
+                            ),
+                          ),
+
+                          placeholder: 'Summary Title (Optional)',
+                          minLines: 1,
+                          maxLines: 4,
+                          // expands: true,
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          keyboardType: TextInputType.text,
+                          controller: _summaryTitleTextController,
+                          textCapitalization: TextCapitalization.sentences,
+
+                          // textInputAction: TextInputAction.done,
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Spacer(),
+                                  Text(
+                                    '$_summaryBodyTextCount',
+                                    style: TextStyle(
+                                      color: CupertinoColors.secondaryLabel
+                                          .resolveFrom(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              CupertinoTextField(
+                                padding: EdgeInsetsGeometry.symmetric(
+                                  horizontal: 8.0,
+                                  vertical: 4.0,
+                                ),
+                                // placeholderStyle: TextStyle(fontSize: 18, ),
+                                placeholder: 'Summary Body (Optional)',
+                                controller: _summaryBodyTextController,
+                                minLines: 5,
+                                maxLines: null,
+                                // expands: true,
+                                style: TextStyle(fontSize: 16),
+                                keyboardType: TextInputType.multiline,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                // textInputAction: TextInputAction.done,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _summaryBodyTextCount = value.length;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Spacer(),
+                        // Text('Create Post Screen'),
+                        // Spacer(),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-              // Spacer(),
-              // Text('Create Post Screen'),
-              // Spacer(),
             ],
           ),
         ),

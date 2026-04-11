@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 class PostsListItemWidget extends StatelessWidget {
   final String postId;
   final String title;
-  final String subTitle;
+  final String? subTitle;
   final String body;
   final int likesCount;
   final int commentCount;
@@ -14,7 +14,7 @@ class PostsListItemWidget extends StatelessWidget {
     super.key,
     required this.postId,
     required this.title,
-    required this.subTitle,
+     this.subTitle,
     required this.body,
     required this.likesCount,
     required this.commentCount,
@@ -29,7 +29,7 @@ class PostsListItemWidget extends StatelessWidget {
         children: [
           Text(postId),
           Text(title),
-          Text(subTitle),
+          Text('$subTitle'),
           Text(body),
           Text('$likesCount'),
           Text('$commentCount'),

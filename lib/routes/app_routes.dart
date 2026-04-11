@@ -61,7 +61,7 @@ import 'package:college_project/features/feed/presentation/pages/search_widget_p
 import 'package:college_project/features/posts/data/datasources/posts_remote_data_source.dart';
 import 'package:college_project/features/posts/data/repositories/post_repositories_impl.dart';
 import 'package:college_project/features/posts/domain/usecase/search_posts.dart';
-import 'package:college_project/features/posts/presentation/bloc/search_posts_bloc/search_posts_bloc.dart';
+// import 'package:college_project/features/posts/presentation/bloc/search_posts_bloc/search_posts_bloc.dart';
 import 'package:college_project/features/posts/presentation/pages/search_posts_page.dart';
 import 'package:college_project/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:college_project/features/profile/data/repositories/profile_repository_impl.dart';
@@ -458,18 +458,18 @@ class AppRoutes extends StatelessWidget {
               ),
             );
 
-          case '/search-posts-page':
-            final args = settings.arguments as String;
-            return CupertinoPageRoute(
-              builder: (_) => BlocProvider(
-                create: (_) => SearchPostsBloc(
-                  SearchPosts(
-                    PostRepositoriesImpl(PostsRemoteDataSource(dioClient.dio)),
-                  ),
-                ),
-                child: SearchPostsPage(communityId: args),
-              ),
-            );
+          // case '/search-posts-page':
+          //   final args = settings.arguments as String;
+          //   return CupertinoPageRoute(
+          //     builder: (_) => BlocProvider(
+          //       create: (_) => SearchPostsBloc(
+          //         SearchPosts(
+          //           PostRepositoriesImpl(PostsRemoteDataSource(dioClient.dio)),
+          //         ),
+          //       ),
+          //       child: SearchPostsPage(communityId: args),
+          //     ),
+          //   );
 
           default:
             return CupertinoPageRoute(builder: (_) => UnknownPage());

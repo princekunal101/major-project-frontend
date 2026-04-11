@@ -65,6 +65,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                     placeholder: 'Username or email address',
                     controller: _controller,
+                    keyboardType: TextInputType.emailAddress,
                   ),
                   SizedBox(
                     width: double.infinity,

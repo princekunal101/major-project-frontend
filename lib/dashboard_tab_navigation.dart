@@ -2,7 +2,11 @@ import 'package:college_project/core/services/dio_client.dart';
 import 'package:college_project/core/services/secure_storage_service.dart';
 import 'package:college_project/features/feed/data/datasources/feed_remote_data_source.dart';
 import 'package:college_project/features/feed/data/repositories/feed_repository_impl.dart';
+import 'package:college_project/features/feed/domain/usecase/get_all_posts_lists.dart';
 import 'package:college_project/features/feed/domain/usecase/get_community_lists.dart';
+import 'package:college_project/features/feed/domain/usecase/get_user_feeds_lists.dart';
+import 'package:college_project/features/feed/presentation/bloc/feed_bloc/feed_bloc.dart';
+import 'package:college_project/features/feed/presentation/bloc/feed_bloc/feed_event.dart';
 import 'package:college_project/features/feed/presentation/bloc/search_community_bloc/search_community_bloc.dart';
 import 'package:college_project/features/feed/presentation/pages/feed_page.dart';
 import 'package:college_project/features/posts/presentation/pages/create_new_post_page.dart';
@@ -87,12 +91,16 @@ class _DashboardTabNavigationState extends State<DashboardTabNavigation> {
         switch (index) {
           case 0:
             return CupertinoTabView(
-              builder: (_) => BlocProvider(
-                create: (_) => SearchCommunityBloc(
-                  GetCommunityLists(
-                    FeedRepositoryImpl(FeedRemoteDataSource(dioClient.dio)),
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<SearchCommunityBloc>(
+                    create: (_) => SearchCommunityBloc(
+                      GetCommunityLists(
+                        FeedRepositoryImpl(FeedRemoteDataSource(dioClient.dio)),
+                      ),
+                    ),
                   ),
-                ),
+                ],
                 child: FeedPage(),
               ),
             );

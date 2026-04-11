@@ -1,4 +1,4 @@
-class PostListItem {
+class FeedListItem {
   final String id;
   final String title;
   final String? subTitle;
@@ -12,8 +12,10 @@ class PostListItem {
   final String username;
   final String communityId;
   final String communityName;
+  final String createdAt;
+  final bool isFollowing;
 
-  PostListItem({
+  FeedListItem({
     required this.id,
     required this.title,
     this.subTitle,
@@ -23,9 +25,11 @@ class PostListItem {
     required this.likesCount,
     required this.commentCount,
     required this.userId,
-    this.userImg,
+     this.userImg,
     required this.username,
     required this.communityId,
     required this.communityName,
+    required this.createdAt,
+    required this.isFollowing,
   });
 }

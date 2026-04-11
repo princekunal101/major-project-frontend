@@ -9,8 +9,47 @@ class PostRepositoriesImpl extends PostRepositories {
 
   @override
   Future<PostListResponseModel> searchPosts(
-    String communityId,
+    String? communityId,
+    String? userId,
     String? title,
     String? cursor,
-  ) => remoteDataSource.postsResponse(communityId, title, cursor);
+    int? limit,
+  ) =>
+      remoteDataSource.fetchPosts(communityId, userId, title, cursor, limit);
+
+  @override
+  Future<void> createNewPost(
+    String communityId,
+    String title,
+    String? subTitle,
+    String body,
+    String? tags,
+    String? summaryTitle,
+    String? summary,
+    String contentType,
+    String? imageUrl,
+  ) {
+    final data = <String, dynamic>{};
+    data['communityId'] = communityId;
+    data['content']['title'] = title;
+    if (subTitle != null) data['content']['subTitle'] = subTitle;
+    data['content']['body'] = body;
+    if (tags != null) data['content']['tags'] = tags;
+    if (summaryTitle != null) data['content']['summaryTitle'] = summaryTitle;
+    if (summary != null) data['content']['summary'] = summary;
+    data['contentType'] = contentType;
+    data['imageUrl'] = imageUrl;
+
+    return remoteDataSource.createNewPost(data);
+  }
+
+  // @override
+  // Future<PostListResponseModel> communityPosts(
+  //   String communityId,
+  //   String? cursor,
+  // ) => remoteDataSource.getCommunityPosts(communityId, cursor);
+  //
+  // @override
+  // Future<PostListResponseModel> userPosts(String userId, String? cursor) =>
+  //     remoteDataSource.getUserPosts(userId, cursor);
 }

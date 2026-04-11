@@ -77,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                       horizontal: 16,
                     ),
                     controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
                     placeholder: 'Username or email address',
                   ),
                   CupertinoTextField(

@@ -1,7 +1,7 @@
-import 'package:college_project/features/posts/domain/entities/post_list_item.dart';
+import 'package:college_project/features/feed/domain/entities/feed_list_item.dart';
 
-class PostListItemModel extends PostListItem {
-  PostListItemModel({
+class FeedListItemModel extends FeedListItem {
+  FeedListItemModel({
     required super.id,
     required super.title,
     super.subTitle,
@@ -15,10 +15,12 @@ class PostListItemModel extends PostListItem {
     required super.username,
     required super.communityId,
     required super.communityName,
+    required super.createdAt,
+    required super.isFollowing,
   });
 
-  factory PostListItemModel.fromJson(Map<String, dynamic> json) {
-    return PostListItemModel(
+  factory FeedListItemModel.fromJson(Map<String, dynamic> json) {
+    return FeedListItemModel(
       id: json['_id'],
       title: json['content']['title'],
       subTitle: json['content']['subTitle'],
@@ -31,6 +33,8 @@ class PostListItemModel extends PostListItem {
       username: json['postedBy']['username'],
       communityId: json['community']['communityId'],
       communityName: json['community']['communityName'],
+      createdAt: json['createdAt'],
+      isFollowing: json['community']['isFollowing'],
     );
   }
 }

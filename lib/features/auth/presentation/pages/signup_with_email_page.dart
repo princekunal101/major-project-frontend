@@ -61,6 +61,7 @@ class _SignupWithEmailPageState extends State<SignupWithEmailPage> {
                     ),
                     placeholder: 'Email address',
                     controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
                   ),
                   SizedBox(
                     width: double.infinity,

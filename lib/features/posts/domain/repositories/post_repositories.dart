@@ -2,8 +2,31 @@ import 'package:college_project/features/posts/data/models/post_list_response_mo
 
 abstract class PostRepositories {
   Future<PostListResponseModel> searchPosts(
-    String communityId,
+    String? communityId,
+    String? userId,
     String? title,
     String? cursor,
+    int? limit,
   );
+
+  Future<void> createNewPost(
+    String communityId,
+    String title,
+    String? subTitle,
+    String body,
+    String? tags, //array
+    String? summaryTitle,
+    String? summary,
+    String contentType,
+    String? imageUrl,
+  );
+
+  // Future<PostListResponseModel> communityPosts(
+  //   String communityId,
+  //   String? cursor,
+  // );
+  // Future<PostListResponseModel> userPosts(
+  //   String userId,
+  //   String? cursor,
+  // );
 }

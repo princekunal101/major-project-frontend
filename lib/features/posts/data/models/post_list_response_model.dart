@@ -17,4 +17,16 @@ class PostListResponseModel extends PostListResponse {
       hasMore: json['hasMore'],
     );
   }
+
+  PostListResponseModel copyWith({
+    List<PostListItemModel>? items,
+    String? nextCursor,
+    bool? hasMore,
+  }) {
+    return PostListResponseModel(
+      list: items ?? list,
+      nextCursor: nextCursor ?? this.nextCursor,
+      hasMore: hasMore ?? this.hasMore,
+    );
+  }
 }
