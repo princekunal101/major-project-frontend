@@ -14,6 +14,7 @@ class FeedListItem {
   final String communityName;
   final String createdAt;
   final bool isFollowing;
+  final bool isLikedByMe;
 
   FeedListItem({
     required this.id,
@@ -31,5 +32,6 @@ class FeedListItem {
     required this.communityName,
     required this.createdAt,
     required this.isFollowing,
+    required this.isLikedByMe
   });
 }

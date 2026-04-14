@@ -4,7 +4,7 @@ import 'package:college_project/features/posts/domain/entities/post_list_respons
 class PostListResponseModel extends PostListResponse {
   PostListResponseModel({
     required super.list,
-    super.nextCursor,
+    super.cursor,
     required super.hasMore,
   });
 
@@ -13,7 +13,7 @@ class PostListResponseModel extends PostListResponse {
       list: (json['items'] as List)
           .map((e) => PostListItemModel.fromJson(e))
           .toList(),
-      nextCursor: json['cursor'],
+      cursor: json['nextCursor'],
       hasMore: json['hasMore'],
     );
   }
@@ -25,7 +25,7 @@ class PostListResponseModel extends PostListResponse {
   }) {
     return PostListResponseModel(
       list: items ?? list,
-      nextCursor: nextCursor ?? this.nextCursor,
+      cursor: nextCursor ?? cursor,
       hasMore: hasMore ?? this.hasMore,
     );
   }

@@ -15,6 +15,8 @@ class PostListItemModel extends PostListItem {
     required super.username,
     required super.communityId,
     required super.communityName,
+    required super.createdAt,
+    required super.isLikedByMe,
   });
 
   factory PostListItemModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,32 @@ class PostListItemModel extends PostListItem {
       username: json['postedBy']['username'],
       communityId: json['community']['communityId'],
       communityName: json['community']['communityName'],
+      createdAt: json['createdAt'],
+      isLikedByMe: json['isLikedByMe'],
+    );
+  }
+
+  PostListItemModel copyWith({
+    String? id,
+    String? title,
+    bool? isLikedByMe,
+    bool? isFollowing,
+  }) {
+    return PostListItemModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      body: body,
+      subTitle: subTitle,
+      summaryTitle: summaryTitle,
+      summary: summary,
+      likesCount: likesCount,
+      commentCount: commentCount,
+      userId: userId,
+      username: username,
+      communityId: communityId,
+      communityName: communityName,
+      createdAt: createdAt,
+      isLikedByMe: isLikedByMe ?? this.isLikedByMe,
     );
   }
 }

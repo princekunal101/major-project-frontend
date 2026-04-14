@@ -2,12 +2,12 @@ import 'package:college_project/features/posts/data/models/post_list_item_model.
 
 class PostListResponse {
   final List<PostListItemModel> list;
-  final String? nextCursor;
+  final String? cursor;
   final bool hasMore;
 
   PostListResponse({
     required this.list,
-    this.nextCursor,
+    this.cursor,
     required this.hasMore,
   });
 }

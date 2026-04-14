@@ -28,15 +28,7 @@ class _UpdateBioWidgetState extends State<UpdateBioWidget> {
 
   void onSubmit() {
     context.read<UpdateProfileBloc>().add(
-      UpdateProfileSubmitted(
-        null,
-        null,
-        null,
-        _controller.text.trim(),
-        null,
-        null,
-        null,
-      ),
+      UpdateProfileSubmitted(bio: _controller.text.trim()),
     );
   }
 

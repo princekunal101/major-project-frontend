@@ -9,6 +9,9 @@ import 'package:college_project/features/feed/presentation/bloc/feed_bloc/feed_b
 import 'package:college_project/features/feed/presentation/bloc/feed_bloc/feed_event.dart';
 import 'package:college_project/features/feed/presentation/bloc/search_community_bloc/search_community_bloc.dart';
 import 'package:college_project/features/feed/presentation/pages/feed_page.dart';
+import 'package:college_project/features/posts/data/datasources/posts_remote_data_source.dart';
+import 'package:college_project/features/posts/data/repositories/post_repositories_impl.dart';
+import 'package:college_project/features/posts/presentation/bloc/create_post_bloc/create_post_bloc.dart';
 import 'package:college_project/features/posts/presentation/pages/create_new_post_page.dart';
 import 'package:college_project/features/profile/data/datasources/profile_remote_data_source.dart';
 import 'package:college_project/features/profile/data/repositories/profile_repository_impl.dart';
@@ -39,7 +42,14 @@ class _DashboardTabNavigationState extends State<DashboardTabNavigation> {
       // Future.microtask(() {
       showCupertinoModalPopup(
         context: context,
-        builder: (_) => CreateNewPostPage(),
+        builder: (_) => BlocProvider<CreatePostBloc>(
+          create: (_) => CreatePostBloc(
+            PostRepositoriesImpl(PostsRemoteDataSource(dioClient.dio)),
+          ),
+          child: CreateNewPostPage(),
+        ),
+
+        // CreateNewPostPage(),
         //     BlocProvider<UpdateProfileBloc>(
         //   create: (_) => UpdateProfileBloc(
         //     UpdateProfile(

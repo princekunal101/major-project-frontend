@@ -1,7 +1,3 @@
-import 'package:college_project/features/feed/presentation/bloc/feed_bloc/feed_bloc.dart';
-import 'package:college_project/features/feed/presentation/bloc/feed_bloc/feed_event.dart';
-import 'package:college_project/features/feed/presentation/bloc/feed_bloc/feed_state.dart';
-import 'package:college_project/features/posts/domain/entities/search_posts_params.dart';
 import 'package:college_project/features/posts/presentation/bloc/fetch_posts_bloc/fetch_posts_bloc.dart';
 import 'package:college_project/features/posts/presentation/bloc/fetch_posts_bloc/fetch_posts_event.dart';
 import 'package:college_project/features/posts/presentation/bloc/fetch_posts_bloc/fetch_posts_state.dart';
@@ -36,9 +32,12 @@ class _CommunityPostItemWidget extends State<CommunityPostItemWidget>
       final state = bloc.state;
       if (state is FetchPostLoaded &&
           state.responseModel.hasMore &&
-          state.responseModel.nextCursor != null) {
+          state.responseModel.cursor != null) {
         bloc.add(
-          LoadNextPosts(state.originalEvent, state.responseModel.nextCursor!),
+          LoadNextPosts(
+            originalEvent: state.originalEvent,
+            cursor: state.responseModel.cursor!,
+          ),
         );
       }
     }
@@ -75,14 +74,14 @@ class _CommunityPostItemWidget extends State<CommunityPostItemWidget>
                 return SliverFillRemaining(
                   child: Center(child: CupertinoActivityIndicator()),
                 );
-              } else if (state is FeedFailure) {
+              } else if (state is FetchPostsError) {
                 return SliverFillRemaining(
                   child: Center(
                     child: Column(
                       spacing: 8,
                       children: [
                         Spacer(),
-                        Text('Something went wrong!'),
+                        Text('Something went wrong! ${state.message}'),
                         CupertinoButton.filled(
                           sizeStyle: CupertinoButtonSize.medium,
                           child: Text('Retry'),
@@ -187,6 +186,13 @@ class _CommunityPostItemWidget extends State<CommunityPostItemWidget>
                         body: post.body,
                         summaryTitle: post.summaryTitle,
                         summaryBody: post.summary,
+                        createdAt: post.createdAt,
+                        isLikedByMe: post.isLikedByMe,
+                        onLikeButtonPress: () {
+                          context.read<FetchPostsBloc>().add(
+                            ToggleLikes(post.id, post.isLikedByMe),
+                          );
+                        },
                       );
                     } else {
                       return const Padding(

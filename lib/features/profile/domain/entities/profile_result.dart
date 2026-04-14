@@ -15,6 +15,7 @@ class ProfileResult {
   final bool? isVerified;
   final bool? showThreads;
   final String? creationDate;
+  final int? postCount;
 
   ProfileResult({
     required this.id,
@@ -33,5 +34,6 @@ class ProfileResult {
     this.showThreads,
     this.dob,
     this.creationDate,
+    this.postCount,
   });
 }

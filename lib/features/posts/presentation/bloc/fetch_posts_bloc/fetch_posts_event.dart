@@ -40,5 +40,12 @@ class LoadNextPosts extends FetchPostsEvent {
   final FetchPostsEvent originalEvent;
   final String cursor;
 
-  LoadNextPosts(this.originalEvent, this.cursor);
+  LoadNextPosts({required this.originalEvent, required this.cursor});
+}
+
+class ToggleLikes extends FetchPostsEvent {
+  final String postId;
+  final bool currentlyLiked;
+
+  ToggleLikes(this.postId, this.currentlyLiked);
 }

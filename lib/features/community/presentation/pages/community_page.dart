@@ -329,8 +329,9 @@ class _CommunityPageState extends State<CommunityPage> {
                   SearchPosts(
                     PostRepositoriesImpl(PostsRemoteDataSource(dioClient.dio)),
                   ),
+                  PostRepositoriesImpl(PostsRemoteDataSource(dioClient.dio)),
                 )..add(FetchCommunityPosts(communityId: widget.communityId)),
-                child: CommunityPostItemWidget(key: PageStorageKey('userFeed')),
+                child: CommunityPostItemWidget(key: PageStorageKey('userFeed'), isCommunity: true,),
               ),
             ),
           );

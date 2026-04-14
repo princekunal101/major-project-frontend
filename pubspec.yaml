@@ -43,6 +43,7 @@ dependencies:
 
   bloc: any
   dio: ^5.9.1
+  timeago: ^3.7.1
 dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_test:

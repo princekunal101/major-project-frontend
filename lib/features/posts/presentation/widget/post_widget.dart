@@ -1,6 +1,18 @@
+import 'package:college_project/core/services/dio_client.dart';
+import 'package:college_project/core/services/secure_storage_service.dart';
+import 'package:college_project/features/posts/data/datasources/posts_remote_data_source.dart';
+import 'package:college_project/features/posts/data/repositories/post_repositories_impl.dart';
+import 'package:college_project/features/posts/domain/usecase/post_reaction.dart';
+import 'package:college_project/features/posts/presentation/bloc/fetch_post_reaction_bloc/fetch_post_reaction_bloc.dart';
+import 'package:college_project/features/posts/presentation/bloc/fetch_post_reaction_bloc/fetch_post_reaction_event.dart';
+import 'package:college_project/features/posts/presentation/bloc/posts_reaction_bloc/post_reaction_bloc.dart';
+import 'package:college_project/features/posts/presentation/bloc/posts_reaction_bloc/post_reaction_event.dart';
+import 'package:college_project/features/posts/presentation/bloc/posts_reaction_bloc/post_reaction_state.dart';
 import 'package:college_project/features/posts/presentation/widget/comments_list_popup_widget.dart';
 import 'package:college_project/features/posts/presentation/widget/likes_list_popup_widget.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class PostWidget extends StatelessWidget {
   final String id;
@@ -16,10 +28,16 @@ class PostWidget extends StatelessWidget {
   final String? summaryBody;
   final int likeCount;
   final int commentCount;
-
+  final String createdAt;
+  final bool isLikedByMe;
   final bool? isFollowing;
 
-  const PostWidget({
+  final VoidCallback? onLikeButtonPress;
+
+  final storage = SecureStorageService();
+  late final dioClient = DioClient(storage);
+
+  PostWidget({
     super.key,
     required this.id,
     required this.username,
@@ -34,8 +52,11 @@ class PostWidget extends StatelessWidget {
     this.summaryBody,
     this.likeCount = 0,
     this.commentCount = 0,
-
+    required this.createdAt,
     this.isFollowing,
+    required this.isLikedByMe,
+
+    this.onLikeButtonPress,
   });
 
   @override
@@ -46,10 +67,7 @@ class PostWidget extends StatelessWidget {
       children: [
         // banner rows
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 4.0,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
           child: Row(
             spacing: 4,
             children: [
@@ -96,10 +114,7 @@ class PostWidget extends StatelessWidget {
                   // Community Name,
                   Text(
                     'c/$communityName',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   // User Name
                   Text(
@@ -119,9 +134,7 @@ class PostWidget extends StatelessWidget {
                   ? CupertinoButton.filled(
                       sizeStyle: CupertinoButtonSize.small,
                       color: isFollowing!
-                          ? CupertinoColors.separator.resolveFrom(
-                              context,
-                            )
+                          ? CupertinoColors.separator.resolveFrom(context)
                           : CupertinoColors.systemBlue,
                       child: Text(isFollowing! ? 'Joined' : 'Join'),
                       onPressed: () {},
@@ -153,12 +166,10 @@ class PostWidget extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: CupertinoColors.separator.resolveFrom(context),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(8),
-                ),
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8)),
               ),
               child: Text(
-                '5 min ago',
+                timeago.format(DateTime.parse(createdAt)),
                 style: TextStyle(fontSize: 14, color: CupertinoColors.white),
               ),
             ),
@@ -173,10 +184,7 @@ class PostWidget extends StatelessWidget {
                   // Title
                   Text(
                     title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 23,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23),
                   ),
                   // SubTitle if have
                   subTitle != null
@@ -194,7 +202,7 @@ class PostWidget extends StatelessWidget {
                   // Text Body
                   Text(body, style: TextStyle(fontSize: 15)),
 
-                  ?summaryTitle != null && summaryBody != null
+                  ?(summaryTitle != null && summaryBody != null)
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -242,92 +250,95 @@ class PostWidget extends StatelessWidget {
           height: 1,
           color: CupertinoColors.separator.resolveFrom(context),
         ),
+
         //interactions
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16),
+        SizedBox(
+          height: 40,
           child: Row(
             children: [
               // likes
-              Row(
-                children: [
-                  //like icon
-                  CupertinoButton(
-                    sizeStyle: CupertinoButtonSize.medium,
-                    padding: EdgeInsetsGeometry.all(0),
-                    child: Icon(CupertinoIcons.heart_circle_fill),
-                    onPressed: () {},
-                  ),
-                  // like counts
-                  GestureDetector(
-                    // for popup like lists
-                    onTap: () {
-                      showCupertinoModalPopup(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (context) => LikesListPopupWidget(
-                          postId: '',
-                          likeCounts: likeCount,
-                        ),
-                      );
-                    },
+              Expanded(
+                flex: 1,
+                child: GestureDetector(
+                  onTap: () {
+                    onLikeButtonPress?.call();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 16.0,
+                    ),
+                    width: double.infinity,
+                    // color: CupertinoColors.systemGreen,
                     child: Text(
-                      '$likeCount likes',
+                      isLikedByMe ? 'Liked' : 'Unliked',
                       style: TextStyle(
-                        fontSize: 14,
-                        color: CupertinoColors.secondaryLabel.resolveFrom(
-                          context,
-                        ),
+                        fontWeight: FontWeight.bold,
+                        color: isLikedByMe
+                            ? CupertinoColors.systemPink
+                            : CupertinoColors.secondaryLabel.resolveFrom(
+                                context,
+                              ),
+                        fontSize: 16,
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
 
-              Spacer(),
-              // comments
-              Row(
-                children: [
-                  //like icon
-                  CupertinoButton(
-                    sizeStyle: CupertinoButtonSize.medium,
-                    padding: EdgeInsetsGeometry.all(0),
-                    child: Icon(CupertinoIcons.chat_bubble_text_fill),
-                    onPressed: () {
-                      showCupertinoModalPopup(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (context) => CommentsListPopupWidget(
-                          postId: '',
-                          commentCounts: commentCount,
+              // Spacer(),
+              Container(
+                height: double.infinity,
+                width: 0.5,
+                color: CupertinoColors.separator.resolveFrom(context),
+              ),
+
+              Expanded(
+                flex: 1,
+                child: GestureDetector(
+                  // for popup like lists
+                  onTap: () {
+                    showCupertinoModalPopup(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (context) => BlocProvider<FetchPostReactionBloc>(
+                        create: (_) =>
+                            FetchPostReactionBloc(
+                                PostRepositoriesImpl(
+                                  PostsRemoteDataSource(dioClient.dio),
+                                ),
+                              )
+                              ..add(FetchLikedUsers(id))
+                              ..add(FetchLikeCount(id)),
+                        child: LikesListPopupWidget(
+                          postId: id,
+                          likeCounts: likeCount,
                         ),
-                      );
-                    },
-                  ),
-                  // like counts
-                  GestureDetector(
-                    onTap: () {
-                      showCupertinoModalPopup(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (context) => CommentsListPopupWidget(
-                          postId: '',
-                          commentCounts: commentCount,
-                        ),
-                      );
-                    },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    // color: CupertinoColors.systemRed,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    width: double.infinity,
+
                     child: Text(
-                      '$commentCount comments',
+                      'All likes',
+                      textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 14,
                         color: CupertinoColors.secondaryLabel.resolveFrom(
                           context,
                         ),
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
-              // comments
             ],
           ),
         ),

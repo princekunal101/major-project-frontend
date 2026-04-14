@@ -12,6 +12,8 @@ class PostListItem {
   final String username;
   final String communityId;
   final String communityName;
+  final String createdAt;
+  final bool isLikedByMe;
 
   PostListItem({
     required this.id,
@@ -27,5 +29,7 @@ class PostListItem {
     required this.username,
     required this.communityId,
     required this.communityName,
+    required this.createdAt,
+    required this.isLikedByMe,
   });
 }

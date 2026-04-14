@@ -17,6 +17,7 @@ class FeedListItemModel extends FeedListItem {
     required super.communityName,
     required super.createdAt,
     required super.isFollowing,
+    required super.isLikedByMe,
   });
 
   factory FeedListItemModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +36,32 @@ class FeedListItemModel extends FeedListItem {
       communityName: json['community']['communityName'],
       createdAt: json['createdAt'],
       isFollowing: json['community']['isFollowing'],
+      isLikedByMe: json['isLikedByMe'],
+    );
+  }
+
+  FeedListItemModel copyWith({
+    String? id,
+    String? title,
+    bool? isLikedByMe,
+    bool? isFollowing,
+  }) {
+    return FeedListItemModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      body: body,
+      subTitle: subTitle,
+      summaryTitle: summaryTitle,
+      summary: summary,
+      likesCount: likesCount,
+      commentCount: commentCount,
+      userId: userId,
+      username: username,
+      communityId: communityId,
+      communityName: communityName,
+      createdAt: createdAt,
+      isFollowing: isFollowing ?? this.isFollowing,
+      isLikedByMe: isLikedByMe ?? this.isLikedByMe,
     );
   }
 }

@@ -9,7 +9,7 @@ class UpdateProfileSubmitted extends UpdateProfileEvent {
   final String? dob;
   final String? link;
 
-  UpdateProfileSubmitted(
+  UpdateProfileSubmitted({
     this.fullName,
     this.username,
     this.gender,
@@ -17,7 +17,7 @@ class UpdateProfileSubmitted extends UpdateProfileEvent {
     this.pronoun,
     this.dob,
     this.link,
-  );
+  });
 }
 
 class UpdateProfileChanged extends UpdateProfileEvent {

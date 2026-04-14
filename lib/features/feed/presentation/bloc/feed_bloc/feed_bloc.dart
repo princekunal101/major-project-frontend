@@ -3,17 +3,20 @@ import 'package:college_project/features/feed/domain/usecase/get_all_posts_lists
 import 'package:college_project/features/feed/domain/usecase/get_user_feeds_lists.dart';
 import 'package:college_project/features/feed/presentation/bloc/feed_bloc/feed_event.dart';
 import 'package:college_project/features/feed/presentation/bloc/feed_bloc/feed_state.dart';
+import 'package:college_project/features/posts/data/repositories/post_repositories_impl.dart';
 
 class FeedBloc extends Bloc<FeedEvent, FeedState> {
   final GetAllPostsLists getAllPostsLists;
   final GetUserFeedsLists getUserFeedsLists;
+  final PostRepositoriesImpl repositories;
 
-  FeedBloc(this.getAllPostsLists, this.getUserFeedsLists)
+  FeedBloc(this.getAllPostsLists, this.getUserFeedsLists, this.repositories)
     : super(FeedInitials()) {
     on<FetchUserFeed>(_onFetchUserFeed);
     on<FetchGlobalFeed>(_onFetchGlobalFeed);
     on<ReloadFeed>(_onReloadFeed);
     on<LoadNextFeed>(_onLoadNextFeed);
+    on<ToggleLikes>(_onToggleLike);
   }
 
   Future<void> _onFetchUserFeed(
@@ -45,11 +48,12 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
   Future<void> _onReloadFeed(ReloadFeed event, Emitter<FeedState> emit) async {
     if (state is FeedLoaded) {
       final current = state as FeedLoaded;
+
       emit(FeedReloading(current.responseModel));
       if (current.isUserFeed) {
-        add(FetchUserFeed());
+        add(FetchUserFeed(cursor: null));
       } else {
-        add(FetchGlobalFeed());
+        add(FetchGlobalFeed(cursor: null));
       }
     }
   }
@@ -84,6 +88,87 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
         );
       } catch (error) {
         emit(FeedFailure(error.toString()));
+      }
+    }
+  }
+
+  // Future<void> _onUpdateLiked(
+  //   UpdateLikes event,
+  //   Emitter<FeedState> emit,
+  // ) async {
+  //   if (state is FeedLoaded) {
+  //     final current = state as FeedLoaded;
+  //     final updatedPosts = current.responseModel.listItem.map((post) {
+  //       if (post.id == event.postId) {
+  //         return post.copyWith(isLikedByMe: event.currentlyLiked);
+  //       }
+  //       return post;
+  //     }).toList();
+  //
+  //     final mergedModel = current.responseModel.copyWith(
+  //       items: updatedPosts,
+  //       nextCursor: current.responseModel.nextCursor,
+  //       hasMore: current.responseModel.hasMore,
+  //     );
+  //
+  //     emit(FeedLoaded(responseModel: mergedModel));
+  //   }
+  // }
+
+  // Future<void> _onUpdateCommunity(
+  //   UpdateCommunityMember event,
+  //   Emitter<FeedState> emit,
+  // ) async {
+  //   if (state is FeedLoaded) {
+  //     final current = state as FeedLoaded;
+  //     final updatedPosts = current.responseModel.listItem.map((post) {
+  //       if (post.communityId == event.communityId) {
+  //         return post.copyWith(isFollowing: event.isMembered);
+  //       }
+  //       return post;
+  //     }).toList();
+  //
+  //     final mergedModel = current.responseModel.copyWith(
+  //       items: updatedPosts,
+  //       nextCursor: current.responseModel.nextCursor,
+  //       hasMore: current.responseModel.hasMore,
+  //     );
+  //
+  //     emit(FeedLoaded(responseModel: mergedModel));
+  //   }
+  // }
+
+  Future _onToggleLike(ToggleLikes event, Emitter<FeedState> emit) async {
+    if (state is FeedLoaded) {
+      final current = state as FeedLoaded;
+
+      // Optimistic update
+      final updatedItems = current.responseModel.listItem.map((post) {
+        if (post.id == event.postId) {
+          return post.copyWith(isLikedByMe: !event.currentlyLiked);
+        }
+        return post;
+      }).toList();
+
+      final updatedModel = current.responseModel.copyWith(
+        items: updatedItems,
+        // hasMore: current.responseModel.hasMore,
+        // nextCursor: current.responseModel.nextCursor,
+      );
+      emit(
+        FeedLoaded(responseModel: updatedModel, isUserFeed: current.isUserFeed),
+      );
+
+      // Call backend
+      try {
+        if (event.currentlyLiked) {
+          await repositories.deletePostReaction(event.postId);
+        } else {
+          await repositories.postReaction(event.postId, "like");
+        }
+      } catch (e) {
+        // Rollback if API fails
+        emit(current);
       }
     }
   }

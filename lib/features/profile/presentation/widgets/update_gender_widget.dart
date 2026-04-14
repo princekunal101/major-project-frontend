@@ -50,7 +50,7 @@ class _UpdateGenderWidgetState extends State<UpdateGenderWidget> {
 
   void onSubmit() {
     context.read<UpdateProfileBloc>().add(
-      UpdateProfileSubmitted(null, null, _enum.name, null, null, null, null),
+      UpdateProfileSubmitted(gender: _enum.name),
     );
   }
 
@@ -70,7 +70,8 @@ class _UpdateGenderWidgetState extends State<UpdateGenderWidget> {
               onPressed: isButtonEnable
                   ? () {
                       onSubmit();
-                    }:null,
+                    }
+                  : null,
               child: Text(
                 'Done',
                 style: TextStyle(fontWeight: FontWeight.bold),

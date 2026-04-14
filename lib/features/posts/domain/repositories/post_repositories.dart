@@ -1,3 +1,5 @@
+import 'package:college_project/core/utils/enums/post_reaction_type.dart';
+import 'package:college_project/features/posts/data/models/post_liked_user_response_model.dart';
 import 'package:college_project/features/posts/data/models/post_list_response_model.dart';
 
 abstract class PostRepositories {
@@ -21,12 +23,14 @@ abstract class PostRepositories {
     String? imageUrl,
   );
 
-  // Future<PostListResponseModel> communityPosts(
-  //   String communityId,
-  //   String? cursor,
-  // );
-  // Future<PostListResponseModel> userPosts(
-  //   String userId,
-  //   String? cursor,
-  // );
+  Future<void> postReaction(String postId, String reactType);
+
+  Future<void> deletePostReaction(String postId);
+
+  Future<void> fetchPostLikedCount(String postId);
+
+  Future<PostLikedUserResponseModel> fetchPostLikedUser(
+    String postId,
+    String? cursor,
+  );
 }

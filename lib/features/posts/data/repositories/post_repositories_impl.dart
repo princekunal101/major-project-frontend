@@ -1,5 +1,8 @@
+import 'package:college_project/core/utils/enums/post_reaction_type.dart';
 import 'package:college_project/features/posts/data/datasources/posts_remote_data_source.dart';
+import 'package:college_project/features/posts/data/models/post_liked_user_response_model.dart';
 import 'package:college_project/features/posts/data/models/post_list_response_model.dart';
+import 'package:college_project/features/posts/data/models/post_reaction_response_model.dart';
 import 'package:college_project/features/posts/domain/repositories/post_repositories.dart';
 
 class PostRepositoriesImpl extends PostRepositories {
@@ -14,8 +17,7 @@ class PostRepositoriesImpl extends PostRepositories {
     String? title,
     String? cursor,
     int? limit,
-  ) =>
-      remoteDataSource.fetchPosts(communityId, userId, title, cursor, limit);
+  ) => remoteDataSource.fetchPosts(communityId, userId, title, cursor, limit);
 
   @override
   Future<void> createNewPost(
@@ -31,17 +33,36 @@ class PostRepositoriesImpl extends PostRepositories {
   ) {
     final data = <String, dynamic>{};
     data['communityId'] = communityId;
+    data['content'] = <String, dynamic>{};
     data['content']['title'] = title;
     if (subTitle != null) data['content']['subTitle'] = subTitle;
     data['content']['body'] = body;
     if (tags != null) data['content']['tags'] = tags;
     if (summaryTitle != null) data['content']['summaryTitle'] = summaryTitle;
     if (summary != null) data['content']['summary'] = summary;
-    data['contentType'] = contentType;
-    data['imageUrl'] = imageUrl;
+    data['content_type'] = contentType;
+    if (imageUrl != null) data['imageUrl'] = imageUrl;
 
     return remoteDataSource.createNewPost(data);
   }
+
+  @override
+  Future<void> deletePostReaction(String postId) =>
+      remoteDataSource.postReactReverse(postId);
+
+  @override
+  Future<void> postReaction(String postId, String reactType) =>
+      remoteDataSource.postReaction(postId, reactType);
+
+  @override
+  Future<PostReactionResponseModel> fetchPostLikedCount(String postId) =>
+      remoteDataSource.fetchLikeCount(postId);
+
+  @override
+  Future<PostLikedUserResponseModel> fetchPostLikedUser(
+    String postId,
+    String? cursor,
+  ) => remoteDataSource.loadLikedUsers(postId, cursor);
 
   // @override
   // Future<PostListResponseModel> communityPosts(

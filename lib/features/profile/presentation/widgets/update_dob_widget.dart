@@ -26,15 +26,7 @@ class _UpdateDobWidgetState extends State<UpdateDobWidget> {
 
   void onSubmit() {
     context.read<UpdateProfileBloc>().add(
-      UpdateProfileSubmitted(
-        null,
-        null,
-        null,
-        null,
-        null,
-        setDate.toIso8601String(),
-        null,
-      ),
+      UpdateProfileSubmitted(dob: setDate.toIso8601String()),
     );
   }
 

@@ -14,6 +14,13 @@ class FetchGlobalFeed extends FeedEvent {
   FetchGlobalFeed({this.cursor, this.limit});
 }
 
+class ToggleLikes extends FeedEvent {
+  final String postId;
+  final bool currentlyLiked;
+
+  ToggleLikes(this.postId, this.currentlyLiked);
+}
+
 class ReloadFeed extends FeedEvent {}
 
 class LoadNextFeed extends FeedEvent {}

@@ -54,18 +54,18 @@ class FeedRemoteDataSource {
       if (response.statusCode == 200) {
         return FeedListResponseModel.fromJson(response.data);
       } else {
-        // throw ServerException('${response.data}');
+        throw ServerException('${response.data}');
         throw ServerException('Something went wrong! Try Again later');
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         throw ServerException('Session code is expired');
       } else {
-        // throw ServerException('${e.response?.data}');
+        throw ServerException('${e.response?.data}');
         throw ServerException('Something went wrong! Try Again later');
       }
     } catch (e) {
-      // throw ServerException(e.toString());
+      throw ServerException(e.toString());
       throw UnknownException('Something went wrong! Try Again later');
     }
   }

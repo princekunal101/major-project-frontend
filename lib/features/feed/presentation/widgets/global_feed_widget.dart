@@ -64,7 +64,7 @@ class _UserFeedWidgetState extends State<GlobalFeedWidget>
                       spacing: 8,
                       children: [
                         Spacer(),
-                        Text('Something went wrong!'),
+                        Text('Something went wrong!${state.message}'),
                         CupertinoButton.filled(
                           sizeStyle: CupertinoButtonSize.medium,
                           child: Text('Retry'),
@@ -75,7 +75,6 @@ class _UserFeedWidgetState extends State<GlobalFeedWidget>
                         Spacer(),
                       ],
                     ),
-
                   ),
                 );
               } else if (state is FeedLoaded || state is FeedLoadingNext) {
@@ -97,6 +96,13 @@ class _UserFeedWidgetState extends State<GlobalFeedWidget>
                           summaryTitle: post.summaryTitle,
                           summaryBody: post.summary,
                           isFollowing: post.isFollowing,
+                          createdAt: post.createdAt,
+                          isLikedByMe: post.isLikedByMe,
+                          onLikeButtonPress: (){
+                            context.read<FeedBloc>().add(
+                              ToggleLikes(post.id, post.isLikedByMe),
+                            );
+                          },
                         );
                       } else {
                         return const Padding(

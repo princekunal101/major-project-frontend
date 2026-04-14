@@ -95,6 +95,13 @@ class _UserFeedWidgetState extends State<UserFeedWidget>
                           body: post.body,
                           summaryTitle: post.summaryTitle,
                           summaryBody: post.summary,
+                          createdAt: post.createdAt,
+                          isLikedByMe: post.isLikedByMe,
+                          onLikeButtonPress: (){
+                            context.read<FeedBloc>().add(
+                              ToggleLikes(post.id, post.isLikedByMe),
+                            );
+                          },
                         );
                       } else {
                         return const Padding(

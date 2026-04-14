@@ -186,7 +186,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                         flex: 1,
                                         child: Center(
                                           child: Text(
-                                            '0',
+                                            '${userData.postCount}',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               // color: CupertinoColors
@@ -273,6 +273,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       PostRepositoriesImpl(
                                         PostsRemoteDataSource(dioClient.dio),
                                       ),
+                                    ),
+                                    PostRepositoriesImpl(
+                                      PostsRemoteDataSource(dioClient.dio),
                                     ),
                                   )..add(FetchUserPosts(userId: userId)),
                                   child: CommunityPostItemWidget(

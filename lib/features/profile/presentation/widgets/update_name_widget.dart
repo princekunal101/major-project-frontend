@@ -39,15 +39,7 @@ class _UpdateNameWidgetState extends State<UpdateNameWidget> {
 
   void onSubmit() {
     context.read<UpdateProfileBloc>().add(
-      UpdateProfileSubmitted(
-        controller.text.trim(),
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-      ),
+      UpdateProfileSubmitted(fullName: controller.text.trim()),
     );
   }
 

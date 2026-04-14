@@ -61,15 +61,7 @@ class _UpdateUsernameWidgetState extends State<UpdateUsernameWidget> {
 
   void onSubmit() {
     context.read<UpdateProfileBloc>().add(
-      UpdateProfileSubmitted(
-        null,
-        _controller.text.trim(),
-        null,
-        null,
-        null,
-        null,
-        null,
-      ),
+      UpdateProfileSubmitted(username: _controller.text.trim()),
     );
   }
 

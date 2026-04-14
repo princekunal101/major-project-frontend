@@ -13,6 +13,8 @@ import 'package:college_project/features/feed/presentation/bloc/search_community
 import 'package:college_project/features/feed/presentation/widgets/community_list_widget.dart';
 import 'package:college_project/features/feed/presentation/widgets/global_feed_widget.dart';
 import 'package:college_project/features/feed/presentation/widgets/user_feed_widget.dart';
+import 'package:college_project/features/posts/data/datasources/posts_remote_data_source.dart';
+import 'package:college_project/features/posts/data/repositories/post_repositories_impl.dart';
 import 'package:college_project/features/posts/presentation/widget/post_widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -220,6 +222,9 @@ class _FeedPageState extends State<FeedPage> {
                       GetUserFeedsLists(
                         FeedRepositoryImpl(FeedRemoteDataSource(dioClient.dio)),
                       ),
+                      PostRepositoriesImpl(
+                        PostsRemoteDataSource(dioClient.dio),
+                      ),
                     )..add(FetchGlobalFeed()),
                     child: GlobalFeedWidget(key: PageStorageKey('globalFeed')),
                   ),
@@ -231,6 +236,9 @@ class _FeedPageState extends State<FeedPage> {
                       ),
                       GetUserFeedsLists(
                         FeedRepositoryImpl(FeedRemoteDataSource(dioClient.dio)),
+                      ),
+                      PostRepositoriesImpl(
+                        PostsRemoteDataSource(dioClient.dio),
                       ),
                     )..add(FetchUserFeed()),
                     child: UserFeedWidget(key: PageStorageKey('userFeed')),

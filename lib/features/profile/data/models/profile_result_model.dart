@@ -18,6 +18,7 @@ class ProfileResultModel extends ProfileResult {
     super.isProfessional,
     super.showThreads,
     super.creationDate,
+    super.postCount,
   });
 
   factory ProfileResultModel.fromJson(Map<String, dynamic> json) {
@@ -38,6 +39,7 @@ class ProfileResultModel extends ProfileResult {
       isProfessional: json['isProfessional'],
       showThreads: json['showThreads'],
       creationDate: json['creationDate'],
+      postCount: json['postCount'],
     );
   }
 }
